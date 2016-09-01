@@ -1,0 +1,47 @@
+apply plugin: 'scala'
+
+project.group = "com.reagroup"
+version = "0.5.0"
+
+repositories {
+    maven { url "https://nexus.in.xplosion.de/nexus/content/groups/public" }
+    jcenter()
+}
+
+dependencies {
+    compile 'org.scala-lang:scala-library:2.11.8'
+
+    compile  'au.com.dius:pact-jvm-provider-junit_2.11:3.2.12'
+    compile  "au.com.dius:pact-jvm-model_2.11:3.2.12"
+    compile  "org.springframework:spring-test:4.3.2.RELEASE"
+    compile  "org.springframework:spring-webmvc:4.3.2.RELEASE"
+    compile  "org.springframework:spring-context:4.3.2.RELEASE"
+    compile  "org.springframework:spring-core:4.3.2.RELEASE"
+    compile  "junit:junit:4.12"
+    compile  "org.skyscreamer:jsonassert:1.2.3"
+    compile  "javax.servlet:javax.servlet-api:3.0.1"
+    compile  "org.mockito:mockito-core:1.9.5"
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.scalatest:scalatest_2.11:3.0.0'
+    testRuntime 'org.scala-lang.modules:scala-xml_2.11:1.0.5'
+    testCompile "org.specs2:specs2_2.11:2.4.2"
+}
+
+
+
+def nexusUserName = project.hasProperty('all.nexus.deployment.user') ? project.getProperties()['all.nexus.deployment.user'] : ''
+def nexusUserPasswd = project.hasProperty('all.nexus.deployment.passwd') ? project.getProperties()['all.nexus.deployment.passwd'] : ''
+
+apply plugin: 'maven'
+uploadArchives {
+    repositories.mavenDeployer {
+        configuration = configurations.archives
+        repository(id: 'nexus', url: "https://nexus.in.xplosion.de/nexus/content/repositories/releases/") {
+            authentication(userName: nexusUserName, password: nexusUserPasswd)
+        }
+        snapshotRepository(id: 'nexus', url: "https://nexus.in.xplosion.de/nexus/content/repositories/snapshots/") {
+            authentication(userName: nexusUserName, password: nexusUserPasswd)
+        }
+    }
+}
